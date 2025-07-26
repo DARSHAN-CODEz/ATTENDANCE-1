@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Calculator - EcoMeter</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .calculator-container {
+            max-width: 800px;
+            margin: 6rem auto 2rem;
+            padding: 2.5rem;
+            background-color: var(--card-background);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        .calculator-container h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-size: 2.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300b894' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.2rem;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.1);
+        }
+
+        .results {
+            display: none;
+            margin-top: 3rem;
+            padding: 2rem;
+            background-color: var(--background-color);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chart-container {
+            margin: 2rem 0;
+            height: 300px;
+            background-color: var(--card-background);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .tips {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--card-background);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .tips h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.2rem;
+            font-size: 1.4rem;
+        }
+
+        .tips ul {
+            list-style-type: none;
+        }
+
+        .tips li {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .tips li:before {
+            content: "🌱";
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.2rem;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">EcoMeter</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="calculator.html" class="active">Calculator</a>
+            <a href="tracker.html">Progress</a>
+            <a href="action.html">Take Action</a>
+        </div>
+        <button id="darkModeToggle" class="dark-mode-toggle">
+            <span class="moon">🌙</span>
+            <span class="sun">☀️</span>
+        </button>
+    </nav>
+
+    <div class="calculator-container">
+        <h2>Calculate Your Carbon Footprint</h2>
+        <form id="carbonForm">
+            <div class="form-group">
+                <label for="commuting">How do you usually commute?</label>
+                <select id="commuting" required>
+                    <option value="">Select an option</option>
+                    <option value="1">Public Transport</option>
+                    <option value="2">Bicycle/Walking</option>
+                    <option value="3">Car (Gasoline)</option>
+                    <option value="4">Car (Electric)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="meat">How often do you consume meat?</label>
+                <select id="meat" required>
+                    <option value="">Select an option</option>
+                    <option value="1">Vegetarian/Vegan</option>
+                    <option value="2">Occasionally (1-2 times/week)</option>
+                    <option value="3">Regularly (3-4 times/week)</option>
+                    <option value="4">Daily</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="energy">What is your primary energy source?</label>
+                <select id="energy" required>
+                    <option value="">Select an option</option>
+                    <option value="1">Renewable Energy</option>
+                    <option value="2">Mixed Sources</option>
+                    <option value="3">Fossil Fuels</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="recycling">How often do you recycle?</label>
+                <select id="recycling" required>
+                    <option value="">Select an option</option>
+                    <option value="1">Always</option>
+                    <option value="2">Most of the time</option>
+                    <option value="3">Sometimes</option>
+                    <option value="4">Rarely</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="flights">How many flights do you take per year?</label>
+                <select id="flights" required>
+                    <option value="">Select an option</option>
+                    <option value="1">None</option>
+                    <option value="2">1-2 flights</option>
+                    <option value="3">3-5 flights</option>
+                    <option value="4">More than 5 flights</option>
+                </select>
+            </div>
+
+            <button type="submit" class="cta-button">Calculate Footprint</button>
+        </form>
+
+        <div id="results" class="results">
+            <h3>Your Carbon Footprint Score</h3>
+            <div class="chart-container">
+                <canvas id="carbonChart"></canvas>
+            </div>
+            <div class="tips">
+                <h3>Tips to Reduce Your Footprint</h3>
+                <ul id="tipsList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('carbonForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const scores = {
+                commuting: parseInt(document.getElementById('commuting').value),
+                meat: parseInt(document.getElementById('meat').value),
+                energy: parseInt(document.getElementById('energy').value),
+                recycling: parseInt(document.getElementById('recycling').value),
+                flights: parseInt(document.getElementById('flights').value)
+            };
+
+            const totalScore = Object.values(scores).reduce((a, b) => a + b, 0);
+            const maxScore = 20; // Maximum possible score
+            const percentage = (totalScore / maxScore) * 100;
+
+            // Show results
+            document.getElementById('results').style.display = 'block';
+
+            // Create chart
+            const ctx = document.getElementById('carbonChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Commuting', 'Diet', 'Energy', 'Recycling', 'Travel'],
+                    datasets: [{
+                        label: 'Carbon Impact Score',
+                        data: [
+                            scores.commuting,
+                            scores.meat,
+                            scores.energy,
+                            scores.recycling,
+                            scores.flights
+                        ],
+                        backgroundColor: [
+                            '#2ecc71',
+                            '#27ae60',
+                            '#219a52',
+                            '#1a8042',
+                            '#146633'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 4
+                        }
+                    }
+                }
+            });
+
+            // Generate tips based on scores
+            const tipsList = document.getElementById('tipsList');
+            tipsList.innerHTML = '';
+            
+            // Always show at least one general tip
+            tipsList.innerHTML = '<li>Every small action counts towards reducing your carbon footprint!</li>';
+            
+            if (scores.commuting > 2) {
+                tipsList.innerHTML += '<li>Consider using public transport or cycling more often</li>';
+            }
+            if (scores.meat > 2) {
+                tipsList.innerHTML += '<li>Try reducing meat consumption by having meat-free days</li>';
+            }
+            if (scores.energy > 2) {
+                tipsList.innerHTML += '<li>Switch to renewable energy sources if possible</li>';
+            }
+            if (scores.recycling > 2) {
+                tipsList.innerHTML += '<li>Improve your recycling habits by separating waste properly</li>';
+            }
+            if (scores.flights > 2) {
+                tipsList.innerHTML += '<li>Consider alternative travel methods or offset your flights</li>';
+            }
+        });
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        });
+    </script>
+</body>
+</html> 

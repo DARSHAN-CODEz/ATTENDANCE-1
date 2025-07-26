@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Action - EcoMeter</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .action-container {
+            max-width: 800px;
+            margin: 6rem auto 2rem;
+            padding: 2rem;
+        }
+
+        .tips-section {
+            background-color: var(--card-background);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            margin-bottom: 2rem;
+        }
+
+        .tip-card {
+            background-color: var(--background-color);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .tip-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .tip-content h4 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .pledge-section {
+            background-color: var(--card-background);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .pledge-list {
+            margin-top: 2rem;
+        }
+
+        .pledge-item {
+            background-color: var(--background-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+        }
+
+        .pledge-item .date {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pledge-item .content {
+            margin-bottom: 0.5rem;
+        }
+
+        .pledge-item .author {
+            font-style: italic;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">EcoMeter</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="calculator.html">Calculator</a>
+            <a href="tracker.html">Progress</a>
+            <a href="action.html" class="active">Take Action</a>
+        </div>
+        <button id="darkModeToggle" class="dark-mode-toggle">
+            <span class="moon">🌙</span>
+            <span class="sun">☀️</span>
+        </button>
+    </nav>
+
+    <div class="action-container">
+        <h2>Take Action for Climate Change</h2>
+
+        <section class="tips-section">
+            <h3>Climate Action Tips</h3>
+            <div class="tip-card">
+                <span class="tip-icon">🚲</span>
+                <div class="tip-content">
+                    <h4>Choose Sustainable Transportation</h4>
+                    <p>Use public transport, bike, or walk whenever possible. Consider carpooling or using electric vehicles for longer distances.</p>
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <span class="tip-icon">💡</span>
+                <div class="tip-content">
+                    <h4>Save Energy</h4>
+                    <p>Switch to LED bulbs, unplug devices when not in use, and use energy-efficient appliances. Consider installing solar panels if possible.</p>
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <span class="tip-icon">🥗</span>
+                <div class="tip-content">
+                    <h4>Eat Sustainably</h4>
+                    <p>Reduce meat consumption, buy local and seasonal produce, and minimize food waste by planning meals and composting.</p>
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <span class="tip-icon">♻️</span>
+                <div class="tip-content">
+                    <h4>Reduce, Reuse, Recycle</h4>
+                    <p>Minimize single-use plastics, bring reusable bags and containers, and properly sort your waste for recycling.</p>
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <span class="tip-icon">💧</span>
+                <div class="tip-content">
+                    <h4>Conserve Water</h4>
+                    <p>Fix leaks, take shorter showers, and use water-efficient appliances. Collect rainwater for plants when possible.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="pledge-section">
+            <h3>Make Your Climate Pledge</h3>
+            <form id="pledgeForm">
+                <div class="form-group">
+                    <label for="pledgeContent">What's your climate action pledge?</label>
+                    <textarea id="pledgeContent" required placeholder="Share your commitment to climate action..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="pledgeName">Your Name (optional)</label>
+                    <input type="text" id="pledgeName" placeholder="Anonymous">
+                </div>
+
+                <button type="submit" class="cta-button">Submit Pledge</button>
+            </form>
+
+            <div class="pledge-list" id="pledgeList">
+                <!-- Pledges will be displayed here -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Initialize pledges array from localStorage or create empty array
+        let pledges = JSON.parse(localStorage.getItem('climatePledges')) || [];
+
+        // Function to save pledges to localStorage
+        function savePledges() {
+            localStorage.setItem('climatePledges', JSON.stringify(pledges));
+        }
+
+        // Function to display pledges
+        function displayPledges() {
+            const pledgeList = document.getElementById('pledgeList');
+            
+            if (pledges.length === 0) {
+                pledgeList.innerHTML = '<p>Be the first to make a climate pledge!</p>';
+                return;
+            }
+
+            pledgeList.innerHTML = pledges
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .map(pledge => `
+                    <div class="pledge-item">
+                        <div class="date">${new Date(pledge.date).toLocaleDateString()}</div>
+                        <div class="content">${pledge.content}</div>
+                        <div class="author">- ${pledge.name || 'Anonymous'}</div>
+                    </div>
+                `)
+                .join('');
+        }
+
+        // Handle form submission
+        document.getElementById('pledgeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const pledge = {
+                content: document.getElementById('pledgeContent').value,
+                name: document.getElementById('pledgeName').value,
+                date: new Date().toISOString()
+            };
+
+            pledges.push(pledge);
+            savePledges();
+            displayPledges();
+
+            // Reset form
+            this.reset();
+        });
+
+        // Display existing pledges on page load
+        displayPledges();
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        });
+    </script>
+</body>
+</html> 

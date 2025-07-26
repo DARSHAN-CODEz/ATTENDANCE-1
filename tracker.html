@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Tracker - EcoMeter</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .tracker-container {
+            max-width: 800px;
+            margin: 6rem auto 2rem;
+            padding: 2rem;
+        }
+
+        .action-form {
+            background-color: var(--card-background);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .action-history {
+            background-color: var(--card-background);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        .action-item {
+            background-color: var(--background-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .action-item .date {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .action-item .action {
+            flex-grow: 1;
+            margin: 0 1rem;
+        }
+
+        .action-item .impact {
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">EcoMeter</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="calculator.html">Calculator</a>
+            <a href="tracker.html" class="active">Progress</a>
+            <a href="action.html">Take Action</a>
+        </div>
+        <button id="darkModeToggle" class="dark-mode-toggle">
+            <span class="moon">🌙</span>
+            <span class="sun">☀️</span>
+        </button>
+    </nav>
+
+    <div class="tracker-container">
+        <h2>Track Your Eco-Friendly Actions</h2>
+        
+        <form id="actionForm" class="action-form">
+            <div class="form-group">
+                <label for="actionType">What did you do?</label>
+                <select id="actionType" required>
+                    <option value="">Select an action</option>
+                    <option value="bike">Used bicycle instead of car</option>
+                    <option value="public">Used public transport</option>
+                    <option value="recycle">Recycled waste</option>
+                    <option value="energy">Saved energy</option>
+                    <option value="water">Saved water</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="actionDate">When did you do it?</label>
+                <input type="date" id="actionDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="actionDescription">Additional details (optional)</label>
+                <input type="text" id="actionDescription" placeholder="Add any relevant details...">
+            </div>
+
+            <button type="submit" class="cta-button">Log Action</button>
+        </form>
+
+        <div class="action-history">
+            <h3>Your Action History</h3>
+            <div id="actionList">
+                <!-- Actions will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize actions array from localStorage or create empty array
+        let actions = JSON.parse(localStorage.getItem('ecoActions')) || [];
+
+        // Function to save actions to localStorage
+        function saveActions() {
+            localStorage.setItem('ecoActions', JSON.stringify(actions));
+        }
+
+        // Function to display actions
+        function displayActions() {
+            const actionList = document.getElementById('actionList');
+            
+            if (actions.length === 0) {
+                actionList.innerHTML = '<div class="empty-state">No actions logged yet. Start tracking your eco-friendly actions!</div>';
+                return;
+            }
+
+            actionList.innerHTML = actions
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .map(action => `
+                    <div class="action-item">
+                        <span class="date">${new Date(action.date).toLocaleDateString()}</span>
+                        <span class="action">${action.type}</span>
+                        ${action.description ? `<span class="description">${action.description}</span>` : ''}
+                        <span class="impact">🌱</span>
+                    </div>
+                `)
+                .join('');
+        }
+
+        // Handle form submission
+        document.getElementById('actionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const action = {
+                type: document.getElementById('actionType').options[document.getElementById('actionType').selectedIndex].text,
+                date: document.getElementById('actionDate').value,
+                description: document.getElementById('actionDescription').value
+            };
+
+            actions.push(action);
+            saveActions();
+            displayActions();
+
+            // Reset form
+            this.reset();
+        });
+
+        // Display existing actions on page load
+        displayActions();
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        });
+    </script>
+</body>
+</html> 
